@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer", "AuthServer\AuthServer.csproj", "{061608D4-9D3D-4569-B21D-DA3BCD264D0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer.DAL", "AuthServer.DAL\AuthServer.DAL.csproj", "{2F652BCE-C4F1-4982-9380-B67690A71E9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{061608D4-9D3D-4569-B21D-DA3BCD264D0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{061608D4-9D3D-4569-B21D-DA3BCD264D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{061608D4-9D3D-4569-B21D-DA3BCD264D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{061608D4-9D3D-4569-B21D-DA3BCD264D0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F652BCE-C4F1-4982-9380-B67690A71E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F652BCE-C4F1-4982-9380-B67690A71E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F652BCE-C4F1-4982-9380-B67690A71E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F652BCE-C4F1-4982-9380-B67690A71E9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

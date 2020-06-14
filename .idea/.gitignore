@@ -1,0 +1,5 @@
+﻿# Default ignored files
+/.idea.auth-api-gateway/.idea/workspace.xml
+# Datasource local storage ignored files
+/.idea.auth-api-gateway/.idea/dataSources/
+/.idea.auth-api-gateway/.idea/dataSources.local.xml
