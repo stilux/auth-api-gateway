@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AuthServer.DAL.Migrations.PersistedGrantDb
 {
     [DbContext(typeof(PersistedGrantDbContext))]
-    [Migration("20200620184242_InitialIdentityServerPersistedGrantDbMigration")]
+    [Migration("20200620233909_InitialIdentityServerPersistedGrantDbMigration")]
     partial class InitialIdentityServerPersistedGrantDbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

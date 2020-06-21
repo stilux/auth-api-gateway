@@ -1,0 +1,668 @@
+{
+	"info": {
+		"_postman_id": "9b5084bd-594e-41de-a376-6844c321e661",
+		"name": "Auth Server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6aea145e-fc66-4c12-bcf2-ad59340366ca",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.to.have.status(200)) {\r",
+							"    try {\r",
+							"        var tokenResponse = JSON.parse(responseBody);\r",
+							"        pm.collectionVariables.set(\"access_token\", tokenResponse.access_token);\r",
+							"    }\r",
+							"    catch (e) {\r",
+							"        console.log(e);\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "{{auth_base_url}}/connect/token",
+					"host": [
+						"{{auth_base_url}}"
+					],
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "444f6937-54e2-453b-a4c4-a9a06c951728",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{auth_base_url}}/connect/userinfo",
+					"host": [
+						"{{auth_base_url}}"
+					],
+					"path": [
+						"connect",
+						"userinfo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revocation Token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "token_type_hint",
+							"value": "access_token",
+							"type": "text"
+						},
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/connect/revocation",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"connect",
+						"revocation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/connect/introspect",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"connect",
+						"introspect"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "faf0444e-4ede-4ab9-83b2-7415108de3a2",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.to.have.status(201)) {\r",
+							"    try {\r",
+							"        pm.collectionVariables.set(\"user_id\", parseInt(responseBody));\r",
+							"    }\r",
+							"    catch (e) {\r",
+							"        console.log(e);\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3a2894e0-0e9b-4054-b3c8-46bee1812979",
+						"exec": [
+							"pm.collectionVariables.set(\"username\", pm.variables.replaceIn(\"{{$randomUserName}}\"));\r",
+							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"givenname\": \"{{$randomFirstName}}\",\r\n    \"familyname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{auth_base_url}}/api/v1/account",
+					"host": [
+						"{{auth_base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Self",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "27c7d3ae-e1a4-46be-90c7-56a42ba571b9",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"givenname\": \"{{$randomFirstName}}\",\r\n    \"familyname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{auth_base_url}}/api/v1/account/{{user_id}}",
+					"host": [
+						"{{auth_base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update other User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "11c7b0dd-6376-4994-a0f2-fcb2df6c0a15",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c35828fb-8bf5-4935-bd41-343d90d650b4",
+						"exec": [
+							"pm.collectionVariables.set(\"other_user_id\", pm.collectionVariables.get(\"user_id\") + 1);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"givenname\": \"Ивановский\",\r\n    \"familyname\": \"Петр\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{auth_base_url}}/api/v1/account/{{other_user_id}}",
+					"host": [
+						"{{auth_base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"{{other_user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0532bc63-f8d8-4bf8-8136-1e14091313ab",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{auth_base_url}}/api/v1/account",
+					"host": [
+						"{{auth_base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "89e4630f-0f7f-469d-8253-0b6cc04cf04e",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.to.have.status(201)) {\r",
+							"    try {\r",
+							"        var product = JSON.parse(responseBody);\r",
+							"        pm.collectionVariables.set(\"product_id\", product.id);\r",
+							"    }\r",
+							"    catch (e) {\r",
+							"        console.log(e);\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomProductName}}\",\r\n    \"vendorcode\": \"{{$randomUUID}}\",\r\n    \"vendor\": \"{{$randomCompanyName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_base_url}}",
+					"host": [
+						"{{api_base_url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "edf63fff-9149-46bc-a6e7-5bd3f47c9415",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": {{product_id}},\r\n    \"name\": \"{{$randomProductName}}\",\r\n    \"vendorcode\": \"{{$randomUUID}}\",\r\n    \"vendor\": \"{{$randomCompanyName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_base_url}}/{{product_id}}",
+					"host": [
+						"{{api_base_url}}"
+					],
+					"path": [
+						"{{product_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70dee2cf-3160-4374-b86a-2992be630b4f",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{api_base_url}}/{{product_id}}",
+					"host": [
+						"{{api_base_url}}"
+					],
+					"path": [
+						"{{product_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7da12b69-ecd0-4102-963a-d6520cf83078",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api_base_url}}/{{product_id}}",
+					"host": [
+						"{{api_base_url}}"
+					],
+					"path": [
+						"{{product_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1717f1e0-3308-4f08-b5fb-3a7d920cc0c3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d9710604-694d-4244-9f8a-0060e157ff0f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "32d6d09e-5add-4320-a3ae-0ceaa3ef6c47",
+			"key": "auth_base_url",
+			"value": "https://localhost:5001",
+			"type": "string"
+		},
+		{
+			"id": "4e9dbe11-27c0-470f-9bfd-74531ae5b12c",
+			"key": "access_token",
+			"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkQyQ0Y2RUYzN0ZBNkEwMDlEMEUxQ0M0NUMyMUNFMzA3IiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE1OTMwMTAwMzcsImV4cCI6MTU5MzAxMzYzNywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSIsImF1ZCI6WyJwcm9kdWN0LWFwaSIsInByb2ZpbGUtYXBpIl0sImNsaWVudF9pZCI6InBvc3RtYW4iLCJzdWIiOiI4IiwiYXV0aF90aW1lIjoxNTkzMDEwMDM3LCJpZHAiOiJsb2NhbCIsImdpdmVuX25hbWUiOiJEb3J0aHkiLCJmYW1pbHlfbmFtZSI6IkhpbnR6IiwianRpIjoiOTk3OEJBMzEzMUM1Nzk0MENGN0MzQjJERTkxRURBNkYiLCJpYXQiOjE1OTMwMTAwMzcsInNjb3BlIjpbImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9kdWN0LWFwaSIsInByb2ZpbGUiLCJwcm9maWxlLWFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.iXc057jTzWJTEa1kFxhPlKEBODe2O4M_ud0xAOvLM_Ioz3Y25Jy_4Yv9VjqkuHB1YGdAiANVMA8LbObINjf5pwNYkzZGH40_l5boIuY0cH23gw29PHuY6Qg51fu3T76p-JPI6f5ukfwkn6IhfglhMgh99FYIg1ugSTwkkFjfimaUKXjPvh5lbsqbD3As2ppGDNIvS5Iqj-FNcg-Pdf2TRd-GGzNAVB_gUU8i8F0Q3gCW2mnLaMW8BmS59wqgTTF-iR9fPnEoOBNlVd--_4YkxCErleudsdgOUaOwfJelJyPiRvMqO5paMWIMhMPupnmXdMEpjOrHmZgKUgOKzobLHw",
+			"type": "string"
+		},
+		{
+			"id": "1f87a605-bc9d-4d6a-808d-eca0fd4e7e97",
+			"key": "client_id",
+			"value": "postman",
+			"type": "string"
+		},
+		{
+			"id": "4609045b-5573-4d0a-a1fb-33de37580921",
+			"key": "client_secret",
+			"value": "42C65298-65C4-41C8-BF11-2F620EC86D0F",
+			"type": "string"
+		},
+		{
+			"id": "cf0c1dad-a957-421a-972e-7e9e2222b70f",
+			"key": "username",
+			"value": "Santa9",
+			"type": "string"
+		},
+		{
+			"id": "d29e8d86-762d-4b73-be2a-f678f04671a0",
+			"key": "password",
+			"value": "1Dv2wGE6mbRrmN8",
+			"type": "string"
+		},
+		{
+			"id": "ee1e21c1-7bd6-4711-9ebd-579bdfba98b5",
+			"key": "api_base_url",
+			"value": "https://localhost:5201/api/v1/product",
+			"type": "string"
+		},
+		{
+			"id": "9e635528-e538-41d5-a79d-358c40eb46bc",
+			"key": "product_id",
+			"value": 8,
+			"type": "number"
+		},
+		{
+			"id": "0cc69f54-bcb0-411d-968f-5eb28d44ab15",
+			"key": "user_id",
+			"value": 8,
+			"type": "number"
+		},
+		{
+			"id": "91bff2a4-3e79-48bd-87ae-4320168fe6c9",
+			"key": "other_user_id",
+			"value": 9,
+			"type": "number"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

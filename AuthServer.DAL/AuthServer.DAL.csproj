@@ -5,7 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.0.0" />
       <PackageReference Include="IdentityServer4.EntityFramework" Version="4.0.0" />
+      <PackageReference Include="IdentityServer4.EntityFramework.Storage" Version="4.0.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.5" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.5" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5" />

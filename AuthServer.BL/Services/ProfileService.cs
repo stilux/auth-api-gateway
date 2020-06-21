@@ -5,9 +5,10 @@ using AuthServer.DAL.Models;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 
-namespace AuthServer.Services
+namespace AuthServer.BL.Services
 {
     public class ProfileService : IProfileService
     {
@@ -40,31 +41,6 @@ namespace AuthServer.Services
             var sub = context.Subject.GetSubjectId();
             var user = await _userManager.FindByIdAsync(sub);
             context.IsActive = user != null;
-        }
-        
-        public async Task<ApplicationUser> GetUserAsync(ClaimsPrincipal principal)
-        {
-            return await _userManager.GetUserAsync(principal);
-        }
-        
-        public async Task<IdentityResult> AddUserAsync(ApplicationUser user, string password)
-        {
-            var result = await _userManager.CreateAsync(user);
-            if (result.Succeeded)
-            {
-                return await _userManager.AddPasswordAsync(user, password);
-            }
-            return result;
-        }
-        
-        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
-        {
-            return await _userManager.UpdateAsync(user);
-        }
-        
-        public async Task<IdentityResult> DeleteUserAsync(ApplicationUser user)
-        {
-            return await _userManager.DeleteAsync(user);
         }
     }
 }

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using AuthServer.DAL.Context;
-using AuthServer.DAL.Models;
-using IdentityModel;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace AuthServer.DAL
 {
@@ -54,6 +49,16 @@ namespace AuthServer.DAL
                 foreach (var resource in Config.Apis)
                 {
                     context.ApiResources.Add(resource.ToEntity());
+                }
+
+                context.SaveChanges();
+            }
+            
+            if (!context.ApiScopes.Any())
+            {
+                foreach (var scope in Config.Scopes)
+                {
+                    context.ApiScopes.Add(scope.ToEntity());
                 }
 
                 context.SaveChanges();

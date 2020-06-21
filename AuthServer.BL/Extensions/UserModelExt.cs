@@ -1,20 +1,20 @@
-﻿using AuthServer.DAL.Models;
-using AuthServer.Models;
+﻿using AuthServer.BL.Models;
+using AuthServer.DAL.Models;
 
-namespace AuthServer.Mappers
+namespace AuthServer.BL.Extensions
 {
-    public static class ApplicationUserMapper
+    public static class UserModelExt
     {
-        public static ApplicationUser MapFrom(RegisterUserDto model)
+        public static ApplicationUser MapToApplicationUser(this CreateUserModel model)
         {
             return new ApplicationUser()
             {
                 UserName = model.UserName,
                 FamilyName = model.FamilyName,
                 GivenName = model.GivenName,
-                EmailConfirmed = true,
                 PhoneNumber = model.PhoneNumber,
                 Email = model.Email,
+                EmailConfirmed = true,
                 PhoneNumberConfirmed = true
             };
         }

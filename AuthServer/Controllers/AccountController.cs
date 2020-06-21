@@ -1,14 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using AuthServer.BL.Exceptions;
+using AuthServer.BL.Interfaces;
 using AuthServer.Extensions;
-using AuthServer.Mappers;
 using AuthServer.Models;
-using AuthServer.Services;
+using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthServer.Controllers
 {
@@ -16,13 +18,13 @@ namespace AuthServer.Controllers
     [Route("api/v1/[controller]")]
     public class AccountController : Controller
     {
-        private readonly IProfileService _profileService;
-        private readonly ILogger<AccountController> _logger;
+        private readonly IAccountService _accountService;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IProfileService profileService, ILogger<AccountController> logger)
+        public AccountController(IAccountService accountService, IConfiguration configuration)
         {
-            _profileService = profileService;
-            _logger = logger;
+            _accountService = accountService;
+            _configuration = configuration;
         }
 
         [AllowAnonymous]
@@ -30,34 +32,44 @@ namespace AuthServer.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register([FromBody]RegisterUserDto model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto model)
         {
             if (model == null) return BadRequest();
-            
-            var result = await _profileService.AddUserAsync(ApplicationUserMapper.MapFrom(model), model.Password);
-            if (result.Succeeded)
+            try
             {
-                return Created("/connect/userinfo", null);
+                var userId = await _accountService.CreateUserAsync(model.MapToUserCreateModel());
+                return Created(_configuration.GetSection("IdentityServer")["UserInfoUrl"], userId);
             }
-            return BadRequest(result.Errors.FirstOrDefault());
+            catch (UserCreateException ex)
+            {
+                return BadRequest(ex.Errors);
+            }
         }
         
         [Authorize]
-        [HttpPut]
+        [HttpPut("{id}")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromBody]UpdateUserDto model)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDto model)
         {
+            if (!User.GetSubjectId().Equals(id.ToString(), StringComparison.InvariantCultureIgnoreCase))
+            {
+                return Forbid();
+            }
+            
             if (model == null) return BadRequest();
-
-            var user = await _profileService.GetUserAsync(User);
-            if (user == null) return Unauthorized();
-
-            var result = await _profileService.UpdateUserAsync(user.UpdateFrom(model));
-            if (result.Succeeded)
-                return NoContent();
-            return BadRequest(result.Errors.FirstOrDefault());
+            try
+            {
+                var result = await _accountService.UpdateUserAsync(User, model.MapToUserUpdateModel());
+                if (result.Succeeded)
+                    return NoContent();
+                return BadRequest(result.Errors);
+            }
+            catch (UserNotFoundException)
+            {
+                return Forbid();
+            }
         }
         
         [Authorize]
@@ -67,13 +79,17 @@ namespace AuthServer.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete()
         {
-            var user = await _profileService.GetUserAsync(User);
-            if (user == null) return Unauthorized();
-
-            var result = await _profileService.DeleteUserAsync(user);
-            if (result.Succeeded)
-                return NoContent();
-            return BadRequest(result.Errors.FirstOrDefault());
+            try
+            {
+                var result = await _accountService.DeleteUserAsync(User);
+                if (result.Succeeded)
+                    return NoContent();
+                return BadRequest(result.Errors.FirstOrDefault());
+            }
+            catch (UserNotFoundException)
+            {
+                return Forbid();
+            }
         }
     }
 }

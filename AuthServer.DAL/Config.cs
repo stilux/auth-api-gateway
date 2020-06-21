@@ -18,14 +18,25 @@ namespace AuthServer.DAL
                 new IdentityResources.Phone()
             };
 
-
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             {
-                new ApiResource("profile-api", "Profile API"),
+                new ApiResource("profile-api", "Profile API")
+                {
+                    Scopes = {"profile-api"}
+                },
                 new ApiResource("product-api", "Product API")
+                {
+                    Scopes = {"product-api"}
+                }
             };
 
+        public static IEnumerable<ApiScope> Scopes =>
+            new ApiScope[]
+            {
+                new ApiScope("profile-api"), 
+                new ApiScope("product-api")
+            };
 
         public static IEnumerable<Client> Clients =>
             new Client[]

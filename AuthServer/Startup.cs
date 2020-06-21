@@ -1,17 +1,21 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using System.Net.Mime;
-using AuthServer.DAL;
+using AuthServer.BL.Interfaces;
+using AuthServer.BL.Services;
+using AuthServer.DAL.Extensions;
 using AuthServer.Filters;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AuthServer.Extensions;
+using AuthServer.Models;
+using AuthServer.Validators;
+using FluentValidation;
+using IdentityServer4.Services;
 
 namespace AuthServer
 {
@@ -28,32 +32,35 @@ namespace AuthServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options => { options.Filters.Add<ValidationFilter>(); })
+            services.AddControllers(options =>
+                {
+                    options.Filters.Add<ValidationFilter>();
+                })
                 .ConfigureApiBehaviorOptions(options =>
                 {
-                    options.InvalidModelStateResponseFactory = context =>
-                    {
-                        var result = new BadRequestObjectResult(context.ModelState);
-                        result.ContentTypes.Add(MediaTypeNames.Application.Json);
-                        return result;
-                    };
+                    options.SuppressModelStateInvalidFilter = true;
                 })
-                .AddFluentValidation(fv =>
-                {
-                    fv.RegisterValidatorsFromAssemblyContaining<Startup>();
-                });
+                .AddFluentValidation();
 
-            services.AddIdentity(_configuration)
-                .AddAuthentication(_configuration);
+            services.AddTransient<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+            services.AddTransient<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
             
+            services.RegisterDbModule(_configuration.GetConnectionString("IdentityServerDBConnection"));
+            
+            services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddSingleton<IDatabaseInitializerService, DatabaseInitializerService>();
+            
+            services.AddAuthentication(_configuration);
             services.AddAuthorization();
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            InitializeDatabase(app);
+            
             if (_environment.IsDevelopment())
             {
-                InitializeDatabase(app);
                 app.UseDeveloperExceptionPage();
             }
 
@@ -67,7 +74,8 @@ namespace AuthServer
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
-            DatabaseInitializer.Initialize(serviceScope.ServiceProvider);
+            var service = serviceScope.ServiceProvider.GetRequiredService<IDatabaseInitializerService>();
+            service.Initialize(serviceScope.ServiceProvider);
         }
     }
 }

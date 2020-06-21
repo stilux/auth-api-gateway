@@ -19,7 +19,7 @@ namespace AuthServer.DAL.Migrations.IdentityDb
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("AuthServer.DAL.Models.ApplicationUser", b =>
+            modelBuilder.Entity("AuthServer.BL.Models.ApplicationUser", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,7 +233,7 @@ namespace AuthServer.DAL.Migrations.IdentityDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
-                    b.HasOne("AuthServer.DAL.Models.ApplicationUser", null)
+                    b.HasOne("AuthServer.BL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -242,7 +242,7 @@ namespace AuthServer.DAL.Migrations.IdentityDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
-                    b.HasOne("AuthServer.DAL.Models.ApplicationUser", null)
+                    b.HasOne("AuthServer.BL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -257,7 +257,7 @@ namespace AuthServer.DAL.Migrations.IdentityDb
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AuthServer.DAL.Models.ApplicationUser", null)
+                    b.HasOne("AuthServer.BL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -266,7 +266,7 @@ namespace AuthServer.DAL.Migrations.IdentityDb
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
-                    b.HasOne("AuthServer.DAL.Models.ApplicationUser", null)
+                    b.HasOne("AuthServer.BL.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

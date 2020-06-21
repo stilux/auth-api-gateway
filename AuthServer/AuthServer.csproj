@@ -8,8 +8,7 @@
     <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
-    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.1.3" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.0.0" />
 
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
   </ItemGroup>
@@ -39,10 +38,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthServer.BL\AuthServer.BL.csproj" />
     <ProjectReference Include="..\AuthServer.DAL\AuthServer.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="obj" />
+    <Folder Include="Services" />
   </ItemGroup>
 </Project>
