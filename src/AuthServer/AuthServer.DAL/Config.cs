@@ -59,6 +59,25 @@ namespace AuthServer.DAL
                         "profile-api",
                         "product-api" 
                     }
+                },
+                new Client
+                {
+                    ClientId = "auth-api-gateway",
+                    ClientName = "Auth API Gateway",
+
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    ClientSecrets = { new Secret("FBF6367F-B077-45FD-8F9D-429BB5926073".Sha256()) },
+                    AllowOfflineAccess = true,
+
+                    AllowedScopes = { 
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile, 
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "profile-api",
+                        "product-api" 
+                    }
                 }
             };
     }

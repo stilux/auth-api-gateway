@@ -20,6 +20,7 @@
 							"if (pm.response.to.have.status(200)) {\r",
 							"    try {\r",
 							"        var tokenResponse = JSON.parse(responseBody);\r",
+							"        console.log(tokenResponse.access_token);\r",
 							"        pm.collectionVariables.set(\"access_token\", tokenResponse.access_token);\r",
 							"    }\r",
 							"    catch (e) {\r",
@@ -35,45 +36,22 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "grant_type",
-							"value": "password",
-							"type": "text"
-						},
-						{
-							"key": "username",
-							"value": "{{username}}",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "{{password}}",
-							"type": "text"
-						},
-						{
-							"key": "client_id",
-							"value": "{{client_id}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{client_secret}}",
-							"type": "text"
-						}
-					],
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
 					"options": {
+						"raw": {
+							"language": "json"
+						},
 						"urlencoded": {}
 					}
 				},
 				"url": {
-					"raw": "{{auth_base_url}}/connect/token",
+					"raw": "{{base_url}}/auth/token",
 					"host": [
-						"{{auth_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
-						"connect",
+						"auth",
 						"token"
 					]
 				}
@@ -110,100 +88,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{auth_base_url}}/connect/userinfo",
-					"host": [
-						"{{auth_base_url}}"
-					],
-					"path": [
-						"connect",
-						"userinfo"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Revocation Token",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "token_type_hint",
-							"value": "access_token",
-							"type": "text"
-						},
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "text"
-						},
-						{
-							"key": "client_id",
-							"value": "{{client_id}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{client_secret}}",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/connect/revocation",
+					"raw": "{{base_url}}/auth/account",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"connect",
-						"revocation"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Check Token",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "text"
-						},
-						{
-							"key": "client_id",
-							"value": "{{client_id}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{client_secret}}",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/connect/introspect",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"connect",
-						"introspect"
+						"auth",
+						"account"
 					]
 				}
 			},
@@ -258,13 +149,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{auth_base_url}}/api/v1/account",
+					"raw": "{{base_url}}/auth/account",
 					"host": [
-						"{{auth_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
-						"api",
-						"v1",
+						"auth",
 						"account"
 					]
 				}
@@ -310,13 +200,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{auth_base_url}}/api/v1/account/{{user_id}}",
+					"raw": "{{base_url}}/auth/account/{{user_id}}",
 					"host": [
-						"{{auth_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
-						"api",
-						"v1",
+						"auth",
 						"account",
 						"{{user_id}}"
 					]
@@ -373,13 +262,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{auth_base_url}}/api/v1/account/{{other_user_id}}",
+					"raw": "{{base_url}}/auth/account/{{other_user_id}}",
 					"host": [
-						"{{auth_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
-						"api",
-						"v1",
+						"auth",
 						"account",
 						"{{other_user_id}}"
 					]
@@ -396,7 +284,7 @@
 						"id": "0532bc63-f8d8-4bf8-8136-1e14091313ab",
 						"exec": [
 							"pm.test(\"Check status\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status(204);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -417,13 +305,12 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{auth_base_url}}/api/v1/account",
+					"raw": "{{base_url}}/auth/account",
 					"host": [
-						"{{auth_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
-						"api",
-						"v1",
+						"auth",
 						"account"
 					]
 				}
@@ -457,6 +344,16 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -469,9 +366,62 @@
 					}
 				},
 				"url": {
-					"raw": "{{api_base_url}}",
+					"raw": "{{base_url}}/product",
 					"host": [
-						"{{api_base_url}}"
+						"{{base_url}}"
+					],
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product (not authentication)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "66da9e73-2a9d-4864-9e4c-538dcc60b11a",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.to.have.status(201)) {\r",
+							"    try {\r",
+							"        var product = JSON.parse(responseBody);\r",
+							"        pm.collectionVariables.set(\"product_id\", product.id);\r",
+							"    }\r",
+							"    catch (e) {\r",
+							"        console.log(e);\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomProductName}}\",\r\n    \"vendorcode\": \"{{$randomUUID}}\",\r\n    \"vendor\": \"{{$randomCompanyName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/product",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"product"
 					]
 				}
 			},
@@ -494,6 +444,16 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [],
 				"body": {
@@ -506,11 +466,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{api_base_url}}/{{product_id}}",
+					"raw": "{{base_url}}/product/{{product_id}}",
 					"host": [
-						"{{api_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
+						"product",
 						"{{product_id}}"
 					]
 				}
@@ -534,14 +495,25 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{api_base_url}}/{{product_id}}",
+					"raw": "{{base_url}}/product/{{product_id}}",
 					"host": [
-						"{{api_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
+						"product",
 						"{{product_id}}"
 					]
 				}
@@ -565,14 +537,25 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{api_base_url}}/{{product_id}}",
+					"raw": "{{base_url}}/product/{{product_id}}",
 					"host": [
-						"{{api_base_url}}"
+						"{{base_url}}"
 					],
 					"path": [
+						"product",
 						"{{product_id}}"
 					]
 				}
@@ -604,63 +587,57 @@
 	],
 	"variable": [
 		{
-			"id": "32d6d09e-5add-4320-a3ae-0ceaa3ef6c47",
-			"key": "auth_base_url",
-			"value": "https://localhost:5001",
+			"id": "444469c1-2dc2-4d65-8dcb-48629d51a5dd",
+			"key": "base_url",
+			"value": "https://localhost:8001",
 			"type": "string"
 		},
 		{
-			"id": "4e9dbe11-27c0-470f-9bfd-74531ae5b12c",
+			"id": "b3b1ff4e-0571-4e8a-b7aa-0cd2dc2ea413",
 			"key": "access_token",
-			"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkQyQ0Y2RUYzN0ZBNkEwMDlEMEUxQ0M0NUMyMUNFMzA3IiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE1OTMwMTAwMzcsImV4cCI6MTU5MzAxMzYzNywiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSIsImF1ZCI6WyJwcm9kdWN0LWFwaSIsInByb2ZpbGUtYXBpIl0sImNsaWVudF9pZCI6InBvc3RtYW4iLCJzdWIiOiI4IiwiYXV0aF90aW1lIjoxNTkzMDEwMDM3LCJpZHAiOiJsb2NhbCIsImdpdmVuX25hbWUiOiJEb3J0aHkiLCJmYW1pbHlfbmFtZSI6IkhpbnR6IiwianRpIjoiOTk3OEJBMzEzMUM1Nzk0MENGN0MzQjJERTkxRURBNkYiLCJpYXQiOjE1OTMwMTAwMzcsInNjb3BlIjpbImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9kdWN0LWFwaSIsInByb2ZpbGUiLCJwcm9maWxlLWFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.iXc057jTzWJTEa1kFxhPlKEBODe2O4M_ud0xAOvLM_Ioz3Y25Jy_4Yv9VjqkuHB1YGdAiANVMA8LbObINjf5pwNYkzZGH40_l5boIuY0cH23gw29PHuY6Qg51fu3T76p-JPI6f5ukfwkn6IhfglhMgh99FYIg1ugSTwkkFjfimaUKXjPvh5lbsqbD3As2ppGDNIvS5Iqj-FNcg-Pdf2TRd-GGzNAVB_gUU8i8F0Q3gCW2mnLaMW8BmS59wqgTTF-iR9fPnEoOBNlVd--_4YkxCErleudsdgOUaOwfJelJyPiRvMqO5paMWIMhMPupnmXdMEpjOrHmZgKUgOKzobLHw",
+			"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkMyOUQ5QzM1QTZGN0YzNUI5NzU3NTdGMkU1Mjk0MTAxIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE1OTMzNzE1MDQsImV4cCI6MTU5MzM3NTEwNCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSIsImF1ZCI6WyJwcm9kdWN0LWFwaSIsInByb2ZpbGUtYXBpIl0sImNsaWVudF9pZCI6ImF1dGgtYXBpLWdhdGV3YXkiLCJzdWIiOiI4IiwiYXV0aF90aW1lIjoxNTkzMzcxNTA0LCJpZHAiOiJsb2NhbCIsImdpdmVuX25hbWUiOiJCcmlnaXR0ZSIsImZhbWlseV9uYW1lIjoiV2FsdGVyIiwianRpIjoiREQ0NUE4MEU0QTRDRTYzOERGQjk5OTFFN0M3ODY0MzciLCJpYXQiOjE1OTMzNzE1MDQsInNjb3BlIjpbImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9kdWN0LWFwaSIsInByb2ZpbGUiLCJwcm9maWxlLWFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.O1K7j6ekU9BwTFHy7Kz_VLmvanhurI3s_t8bzP7-H5MLrJ_nh7I21xWUP0qFW7DEHZ8agaph3y_v52yRVIffVYcPT3crcwMhhmVVOC58VDBld9e3ROqeRf-sctf14p-CRK8QtUsR8iTInbZHBTtrbuouW9ZP_2_Qv6nLYAC3nLdRSno1uNQHrB-tTTMyOFY-nYZUW5hzXIvpdAI5DOdTd-wOUEJCqWQNOtuGe7EC0Kt2hGYXU4Vo1ulmhDbbYOD-oJ00LKgxcR52odQTTvDm79IAry-mtouBKftl_mzP_0dRB6fXPJVaQ_N4E4A85Gt9NFxz2-6Nz8eqH0pXcCkNNA",
 			"type": "string"
 		},
 		{
-			"id": "1f87a605-bc9d-4d6a-808d-eca0fd4e7e97",
+			"id": "62a60a1e-cfb4-47ef-9e52-4a60e1d55487",
 			"key": "client_id",
 			"value": "postman",
 			"type": "string"
 		},
 		{
-			"id": "4609045b-5573-4d0a-a1fb-33de37580921",
+			"id": "599e7739-f1a4-42a3-9e60-b5eb2a15361b",
 			"key": "client_secret",
 			"value": "42C65298-65C4-41C8-BF11-2F620EC86D0F",
 			"type": "string"
 		},
 		{
-			"id": "cf0c1dad-a957-421a-972e-7e9e2222b70f",
+			"id": "50ffdd6b-ef3e-4dbc-a0cc-2d1d0ba3c912",
 			"key": "username",
-			"value": "Santa9",
+			"value": "Pearline.Hansen45",
 			"type": "string"
 		},
 		{
-			"id": "d29e8d86-762d-4b73-be2a-f678f04671a0",
+			"id": "75cb4273-4968-4ce0-b6a4-c02b6a4cfca7",
 			"key": "password",
-			"value": "1Dv2wGE6mbRrmN8",
+			"value": "t3XyP5hDkc01Au2",
 			"type": "string"
 		},
 		{
-			"id": "ee1e21c1-7bd6-4711-9ebd-579bdfba98b5",
-			"key": "api_base_url",
-			"value": "https://localhost:5201/api/v1/product",
-			"type": "string"
-		},
-		{
-			"id": "9e635528-e538-41d5-a79d-358c40eb46bc",
+			"id": "e74bca0c-1f3e-4aa9-937a-836fe317220a",
 			"key": "product_id",
-			"value": 8,
+			"value": 14,
 			"type": "number"
 		},
 		{
-			"id": "0cc69f54-bcb0-411d-968f-5eb28d44ab15",
+			"id": "e89fe8e3-1f69-4843-b3e1-c1fe043546d8",
 			"key": "user_id",
 			"value": 8,
 			"type": "number"
 		},
 		{
-			"id": "91bff2a4-3e79-48bd-87ae-4320168fe6c9",
+			"id": "9c7e7c80-92ee-49d1-b24c-19f702e11a44",
 			"key": "other_user_id",
-			"value": 9,
+			"value": 7,
 			"type": "number"
 		}
 	],

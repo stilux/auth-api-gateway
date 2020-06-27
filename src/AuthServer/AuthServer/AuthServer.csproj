@@ -41,9 +41,4 @@
     <ProjectReference Include="..\AuthServer.BL\AuthServer.BL.csproj" />
     <ProjectReference Include="..\AuthServer.DAL\AuthServer.DAL.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="obj" />
-    <Folder Include="Services" />
-  </ItemGroup>
 </Project>

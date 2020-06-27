@@ -20,7 +20,7 @@ namespace AuthServer.Extensions
                 {
                     options.Authority = configuration.GetSection("IdentityServer")["BaseUrl"];
                     options.ApiName = "profile-api";
-                    options.RequireHttpsMetadata = true;
+                    options.RequireHttpsMetadata = false;
                 });
         }
     }
