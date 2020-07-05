@@ -18,7 +18,7 @@ namespace AuthServer.BL.Services
             _userManager = userManager;
         }
 
-        public async Task<long> CreateUserAsync(CreateUserModel user)
+        public async Task<UserModel> CreateUserAsync(CreateUserModel user)
         {
             var appUser = user.MapToApplicationUser();
             
@@ -29,9 +29,15 @@ namespace AuthServer.BL.Services
             }
 
             if (result.Succeeded)
-                return appUser.Id;
+                return appUser?.MapToUserModel();
             
             throw new UserCreateException(result.Errors);
+        }
+
+        public async Task<UserModel> GetUserAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            return user?.MapToUserModel();
         }
         
         public async Task<IdentityResult> UpdateUserAsync(ClaimsPrincipal principal, UpdateUserModel updateUserModel)

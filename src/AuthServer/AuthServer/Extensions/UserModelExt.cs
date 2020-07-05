@@ -1,21 +1,20 @@
 ﻿using AuthServer.BL.Models;
-using AuthServer.DAL.Models;
+using AuthServer.Models;
 
-namespace AuthServer.BL.Extensions
+namespace AuthServer.Extensions
 {
     public static class UserModelExt
     {
-        public static ApplicationUser MapToApplicationUser(this CreateUserModel model)
+        public static UserDto MapToUserDto(this UserModel model)
         {
-            return new ApplicationUser()
+            return new UserDto()
             {
+                Id = model.Id,
                 UserName = model.UserName,
                 FamilyName = model.FamilyName,
                 GivenName = model.GivenName,
                 PhoneNumber = model.PhoneNumber,
-                Email = model.Email,
-                EmailConfirmed = true,
-                PhoneNumberConfirmed = true
+                Email = model.Email
             };
         }
     }

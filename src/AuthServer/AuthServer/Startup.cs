@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.IdentityModel.Tokens.Jwt;
 using AuthServer.BL.Interfaces;
 using AuthServer.BL.Services;
 using AuthServer.DAL.Extensions;
@@ -45,6 +46,8 @@ namespace AuthServer
             services.AddTransient<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddTransient<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
             
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            
             services.RegisterDbModule(_configuration.GetConnectionString("IdentityServerDBConnection"));
             
             services.AddScoped<IProfileService, ProfileService>();
@@ -64,10 +67,11 @@ namespace AuthServer
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
             app.UseAuthentication();
             app.UseIdentityServer();
+            app.UseRouting();
             app.UseAuthorization();
+            
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
 

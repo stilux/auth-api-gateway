@@ -42,7 +42,7 @@
         }
       ],
       "UpstreamPathTemplate": "/auth/account/{id}",
-      "UpstreamHttpMethod": [ "PUT" ],
+      "UpstreamHttpMethod": [ "PUT", "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "identity_provider",
         "AllowedScopes": []
@@ -75,23 +75,7 @@
         "AuthenticationProviderKey": "identity_provider",
         "AllowedScopes": []
       }
-    },
-    {
-      "DownstreamPathTemplate": "/connect/userinfo",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "UpstreamPathTemplate": "/auth/account",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "identity_provider",
-        "AllowedScopes": []
-      }
-    },
+    },    
     {
       "DownstreamPathTemplate": "/auth/token",
       "DownstreamScheme": "https",

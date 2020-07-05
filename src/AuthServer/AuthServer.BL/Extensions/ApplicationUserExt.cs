@@ -14,5 +14,18 @@ namespace AuthServer.BL.Extensions
 
             return user;
         }
+        
+        public static UserModel MapToUserModel(this ApplicationUser user)
+        {
+            return new UserModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FamilyName = user.FamilyName,
+                GivenName = user.GivenName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email
+            };
+        }
     }
 }

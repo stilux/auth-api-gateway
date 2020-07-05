@@ -1,0 +1,149 @@
+---
+{{- $authServer := include "auth-server.fullname" . -}}
+{{- $gateway := include "gateway.fullname" . -}}
+{{- $productApi := include "product-api.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "auth-gateway-chart.fullname" . }}
+  labels:
+    {{- include "auth-gateway-chart.selectorLabels" . | nindent 4 }}
+data:   
+  appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": {{ .Values.log.level | quote }},
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "AllowedHosts": "*"
+    }
+  auth-server-appsettings.json: |-
+    {
+      "IdentityServer": {
+        "BaseUrl": "http://localhost"
+      }
+    }
+  ocelot.json: |-
+    {
+      "Routes": [
+      {
+        "DownstreamPathTemplate": "/api/v1/product/{id}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $productApi | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/product/{id}",
+        "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],        
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "identity_provider",
+          "AllowedScopes": []
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/api/v1/product",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $productApi | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/product",
+        "UpstreamHttpMethod": [ "POST" ],        
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "identity_provider",
+          "AllowedScopes": []
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/api/v1/account/{id}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $authServer | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/auth/account/{id}",
+        "UpstreamHttpMethod": [ "PUT", "GET" ],        
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "identity_provider",
+          "AllowedScopes": []
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/api/v1/account",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $authServer | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/auth/account",
+        "UpstreamHttpMethod": [ "POST" ]
+      },
+      {
+        "DownstreamPathTemplate": "/api/v1/account",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $authServer | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/auth/account",
+        "UpstreamHttpMethod": [ "DELETE" ],        
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "identity_provider",
+          "AllowedScopes": []
+        }
+      },      
+      {
+        "DownstreamPathTemplate": "/auth/token",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": {{ $gateway | quote }},
+            "Port": {{ .Values.service.port }}
+          }
+        ],
+        "UpstreamPathTemplate": "/auth/token",
+        "UpstreamHttpMethod": [ "POST" ]
+      }      
+      ],
+      "GlobalConfiguration": {
+        "BaseUrl": {{ $gateway | quote }},
+        "RouteIsCaseSensitive": false
+      }
+    }
+    
+---
+{{- if .Values.ingress.enabled -}}
+{{- $service := include "gateway.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+  {{- else -}}
+apiVersion: extensions/v1beta1
+  {{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "auth-gateway-chart.fullname" . }}
+  labels:
+  {{- include "auth-gateway-chart.labels" . | nindent 4 }}
+spec:
+  rules:    
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $service }}
+              servicePort: {{ $svcPort }}
+{{- end }}

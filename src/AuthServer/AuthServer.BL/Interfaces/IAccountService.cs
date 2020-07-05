@@ -7,7 +7,8 @@ namespace AuthServer.BL.Interfaces
 {
     public interface IAccountService
     {
-        Task<long> CreateUserAsync(CreateUserModel user);
+        Task<UserModel> CreateUserAsync(CreateUserModel user);
+        Task<UserModel> GetUserAsync(string userId);
         Task<IdentityResult> UpdateUserAsync(ClaimsPrincipal principal, UpdateUserModel updateUserModel);
         Task<IdentityResult> DeleteUserAsync(ClaimsPrincipal principal);
     }

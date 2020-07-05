@@ -1,0 +1,50 @@
+postgresql:
+  enabled: true
+  postgresqlUsername: "db_user"
+  postgresqlPassword: "Zu0yAx"
+  identityServerDatabase: "IdentityServer"
+  productDatabase: "Products"
+  service:
+    port: "5432"
+  image:
+    tag: "latest"
+  persistence:
+    size: 1Gi   
+      
+productApi:
+  image:
+    repository: "stilux/product-api"
+    pullPolicy: Always
+  replicaCount: 2
+  configPath: "/app/config"
+  logLevel: "Information"
+  allowedHosts: "*"
+  
+authServer:
+  image:
+    repository: "stilux/auth-server"
+    pullPolicy: Always
+  replicaCount: 1
+  configPath: "/app/config"
+  logLevel: "Information"
+  allowedHosts: "*"
+  
+apiGateway:
+  image:
+    repository: "stilux/auth-api-gateway"
+    pullPolicy: Always
+  replicaCount: 1
+  configPath: "/app/config"
+  logLevel: "Information"
+  allowedHosts: "*"
+  
+service:
+  type: "ClusterIP"
+  port: 80
+  
+ingress:
+  enabled: true
+  host: arch.homework  
+  
+log:  
+  level: "Information"

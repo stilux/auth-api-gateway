@@ -40,6 +40,7 @@ namespace AuthServer.DAL.Extensions
                         builder.UseNpgsql(connectionString,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                 })
+                .AddConfigurationStoreCache()
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = builder =>

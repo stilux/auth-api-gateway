@@ -1,5 +1,4 @@
-﻿using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -13,15 +12,16 @@ namespace AuthServer.Extensions
         {
             return services.AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddIdentityServerAuthentication(options =>
+                .AddIdentityServerAuthentication(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.Authority = configuration.GetSection("IdentityServer")["BaseUrl"];
-                    options.ApiName = "profile-api";
+                    options.Audience = "profile-api";
                     options.RequireHttpsMetadata = false;
-                });
+                    options.TokenValidationParameters.ValidateIssuer = false;
+                }, null);
         }
     }
 }

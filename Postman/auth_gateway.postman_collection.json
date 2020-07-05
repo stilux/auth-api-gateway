@@ -1,12 +1,190 @@
 {
 	"info": {
 		"_postman_id": "9b5084bd-594e-41de-a376-6844c321e661",
-		"name": "Auth Server",
+		"name": "Auth API Gateway",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Get Token",
+			"name": "Add product without authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "66da9e73-2a9d-4864-9e4c-538dcc60b11a",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomProductName}}\",\r\n    \"vendorcode\": \"{{$randomUUID}}\",\r\n    \"vendor\": \"{{$randomCompanyName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/product",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "faf0444e-4ede-4ab9-83b2-7415108de3a2",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.to.have.status(201)) {\r",
+							"    var user = JSON.parse(responseBody);\r",
+							"    pm.collectionVariables.set(\"user1_id\", user.id);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3a2894e0-0e9b-4054-b3c8-46bee1812979",
+						"exec": [
+							"pm.collectionVariables.set(\"user1_username\", pm.variables.replaceIn(\"{{$randomUserName}}\"));\r",
+							"pm.collectionVariables.set(\"user1_password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{user1_username}}\",\r\n    \"password\": \"{{user1_password}}\",\r\n    \"givenname\": \"{{$randomFirstName}}\",\r\n    \"familyname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/account",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user1 without authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4db64267-5ba6-46bc-8648-b576bcdae3d3",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/account/{{user1_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"account",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user1 without authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ed2473c9-1d5a-45e5-94b3-219454ad2dc7",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"givenname\": \"{{$randomFirstName}}\",\r\n    \"familyname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/account/{{user1_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"account",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get token for user1",
 			"event": [
 				{
 					"listen": "test",
@@ -18,14 +196,8 @@
 							"});\r",
 							"\r",
 							"if (pm.response.to.have.status(200)) {\r",
-							"    try {\r",
-							"        var tokenResponse = JSON.parse(responseBody);\r",
-							"        console.log(tokenResponse.access_token);\r",
-							"        pm.collectionVariables.set(\"access_token\", tokenResponse.access_token);\r",
-							"    }\r",
-							"    catch (e) {\r",
-							"        console.log(e);\r",
-							"    }\r",
+							"    var tokenResponse = JSON.parse(responseBody);\r",
+							"    pm.collectionVariables.set(\"user1_access_token\", tokenResponse.access_token);\r",
 							"}"
 						],
 						"type": "text/javascript"
@@ -37,7 +209,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"raw": "{\r\n    \"username\": \"{{user1_username}}\",\r\n    \"password\": \"{{user1_password}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -59,7 +231,72 @@
 			"response": []
 		},
 		{
-			"name": "Get User Info",
+			"name": "Update user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "27c7d3ae-e1a4-46be-90c7-56a42ba571b9",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b5f510c7-35bb-4533-aede-93ec2a2543d8",
+						"exec": [
+							"pm.collectionVariables.set(\"user1_givenname\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));\r",
+							"pm.collectionVariables.set(\"user1_familyname\", pm.variables.replaceIn(\"{{$randomLastName}}\"));\r",
+							"pm.collectionVariables.set(\"user1_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));\r",
+							"pm.collectionVariables.set(\"user1_phonenumber\", pm.variables.replaceIn(\"{{$randomPhoneNumber}}\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"givenname\": \"{{user1_givenname}}\",\r\n    \"familyname\": \"{{user1_familyname}}\",\r\n    \"email\": \"{{user1_email}}\",\r\n    \"phonenumber\": \"{{user1_phonenumber}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/account/{{user1_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"account",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user1",
 			"event": [
 				{
 					"listen": "test",
@@ -68,6 +305,14 @@
 						"exec": [
 							"pm.test(\"Check status\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check user1 update\", function () {\r",
+							"    var user = JSON.parse(responseBody);    \r",
+							"    pm.expect(user.givenName).to.eql(pm.collectionVariables.get(\"user1_givenname\"));    \r",
+							"    pm.expect(user.familyName).to.eql(pm.collectionVariables.get(\"user1_familyname\"));\r",
+							"    pm.expect(user.email).to.eql(pm.collectionVariables.get(\"user1_email\"));\r",
+							"    pm.expect(user.phoneNumber).to.eql(pm.collectionVariables.get(\"user1_phonenumber\"));\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -80,7 +325,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{access_token}}",
+							"value": "{{user1_access_token}}",
 							"type": "string"
 						}
 					]
@@ -88,37 +333,34 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/auth/account",
+					"raw": "{{base_url}}/auth/account/{{user1_id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"auth",
-						"account"
+						"account",
+						"{{user1_id}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Register User",
+			"name": "Register user2",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "faf0444e-4ede-4ab9-83b2-7415108de3a2",
+						"id": "de84f944-ab9b-434d-87c2-88ab085dce63",
 						"exec": [
 							"pm.test(\"Check status\", function () {\r",
 							"    pm.response.to.have.status(201);\r",
 							"});\r",
 							"\r",
 							"if (pm.response.to.have.status(201)) {\r",
-							"    try {\r",
-							"        pm.collectionVariables.set(\"user_id\", parseInt(responseBody));\r",
-							"    }\r",
-							"    catch (e) {\r",
-							"        console.log(e);\r",
-							"    }\r",
+							"    var user = JSON.parse(responseBody);\r",
+							"    pm.collectionVariables.set(\"user2_id\", user.id);\r",
 							"}"
 						],
 						"type": "text/javascript"
@@ -127,10 +369,10 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "3a2894e0-0e9b-4054-b3c8-46bee1812979",
+						"id": "2914f1a1-8967-4845-a801-2ca4dd4618a7",
 						"exec": [
-							"pm.collectionVariables.set(\"username\", pm.variables.replaceIn(\"{{$randomUserName}}\"));\r",
-							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
+							"pm.collectionVariables.set(\"user2_username\", pm.variables.replaceIn(\"{{$randomUserName}}\"));\r",
+							"pm.collectionVariables.set(\"user2_password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));"
 						],
 						"type": "text/javascript"
 					}
@@ -141,7 +383,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"givenname\": \"{{$randomFirstName}}\",\r\n    \"familyname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
+					"raw": "{\r\n    \"username\": \"{{user2_username}}\",\r\n    \"password\": \"{{user2_password}}\",\r\n    \"givenname\": \"{{$randomFirstName}}\",\r\n    \"familyname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -162,15 +404,62 @@
 			"response": []
 		},
 		{
-			"name": "Update Self",
+			"name": "Get token for user2",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "27c7d3ae-e1a4-46be-90c7-56a42ba571b9",
+						"id": "930636d1-bab6-4579-8947-902f28b1f16a",
 						"exec": [
 							"pm.test(\"Check status\", function () {\r",
-							"    pm.response.to.have.status(204);\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if (pm.response.to.have.status(200)) {\r",
+							"    var tokenResponse = JSON.parse(responseBody);\r",
+							"    pm.collectionVariables.set(\"user2_access_token\", tokenResponse.access_token);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{user2_username}}\",\r\n    \"password\": \"{{user2_password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						},
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User2 try to update profile of user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "391b132e-0ca0-49f5-bfb3-3215984ba617",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -183,7 +472,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{access_token}}",
+							"value": "{{user2_access_token}}",
 							"type": "string"
 						}
 					]
@@ -200,26 +489,26 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/auth/account/{{user_id}}",
+					"raw": "{{base_url}}/auth/account/{{user1_id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"auth",
 						"account",
-						"{{user_id}}"
+						"{{user1_id}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Update other User",
+			"name": "User2 try to access profile of user1",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "11c7b0dd-6376-4994-a0f2-fcb2df6c0a15",
+						"id": "e8cd817a-bc33-4eb8-9e28-1b2d476a4eb1",
 						"exec": [
 							"pm.test(\"Check status\", function () {\r",
 							"    pm.response.to.have.status(403);\r",
@@ -227,16 +516,6 @@
 						],
 						"type": "text/javascript"
 					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "c35828fb-8bf5-4935-bd41-343d90d650b4",
-						"exec": [
-							"pm.collectionVariables.set(\"other_user_id\", pm.collectionVariables.get(\"user_id\") + 1);"
-						],
-						"type": "text/javascript"
-					}
 				}
 			],
 			"request": {
@@ -245,80 +524,29 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{access_token}}",
+							"value": "{{user2_access_token}}",
 							"type": "string"
 						}
 					]
 				},
-				"method": "PUT",
+				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{    \r\n    \"givenname\": \"Ивановский\",\r\n    \"familyname\": \"Петр\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"phonenumber\": \"{{$randomPhoneNumber}}\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "{{base_url}}/auth/account/{{other_user_id}}",
+					"raw": "{{base_url}}/auth/account/{{user1_id}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"auth",
 						"account",
-						"{{other_user_id}}"
+						"{{user1_id}}"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete User",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "0532bc63-f8d8-4bf8-8136-1e14091313ab",
-						"exec": [
-							"pm.test(\"Check status\", function () {\r",
-							"    pm.response.to.have.status(204);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/auth/account",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"auth",
-						"account"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Product",
+			"name": "User2 add product",
 			"event": [
 				{
 					"listen": "test",
@@ -330,13 +558,8 @@
 							"});\r",
 							"\r",
 							"if (pm.response.to.have.status(201)) {\r",
-							"    try {\r",
-							"        var product = JSON.parse(responseBody);\r",
-							"        pm.collectionVariables.set(\"product_id\", product.id);\r",
-							"    }\r",
-							"    catch (e) {\r",
-							"        console.log(e);\r",
-							"    }\r",
+							"    var product = JSON.parse(responseBody);\r",
+							"    pm.collectionVariables.set(\"product_id\", product.id);\r",
 							"}"
 						],
 						"type": "text/javascript"
@@ -349,7 +572,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{access_token}}",
+							"value": "{{user2_access_token}}",
 							"type": "string"
 						}
 					]
@@ -378,57 +601,7 @@
 			"response": []
 		},
 		{
-			"name": "Add Product (not authentication)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "66da9e73-2a9d-4864-9e4c-538dcc60b11a",
-						"exec": [
-							"pm.test(\"Test status\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});\r",
-							"\r",
-							"if (pm.response.to.have.status(201)) {\r",
-							"    try {\r",
-							"        var product = JSON.parse(responseBody);\r",
-							"        pm.collectionVariables.set(\"product_id\", product.id);\r",
-							"    }\r",
-							"    catch (e) {\r",
-							"        console.log(e);\r",
-							"    }\r",
-							"}"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"{{$randomProductName}}\",\r\n    \"vendorcode\": \"{{$randomUUID}}\",\r\n    \"vendor\": \"{{$randomCompanyName}}\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/product",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"product"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Product",
+			"name": "User2 update product",
 			"event": [
 				{
 					"listen": "test",
@@ -449,7 +622,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{access_token}}",
+							"value": "{{user2_access_token}}",
 							"type": "string"
 						}
 					]
@@ -479,49 +652,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete Product",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "70dee2cf-3160-4374-b86a-2992be630b4f",
-						"exec": [
-							"pm.test(\"Test status\", function () {\r",
-							"    pm.response.to.have.status(204);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/product/{{product_id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"product",
-						"{{product_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Product",
+			"name": "User2 get product",
 			"event": [
 				{
 					"listen": "test",
@@ -542,7 +673,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{access_token}}",
+							"value": "{{user2_access_token}}",
 							"type": "string"
 						}
 					]
@@ -557,6 +688,132 @@
 					"path": [
 						"product",
 						"{{product_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User2 delete product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70dee2cf-3160-4374-b86a-2992be630b4f",
+						"exec": [
+							"pm.test(\"Test status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/product/{{product_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"product",
+						"{{product_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0532bc63-f8d8-4bf8-8136-1e14091313ab",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user1_access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/account",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b1e45852-f244-495c-bf90-71d19f158e21",
+						"exec": [
+							"pm.test(\"Check status\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{user2_access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/auth/account",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"account"
 					]
 				}
 			},
@@ -580,65 +837,82 @@
 				"id": "d9710604-694d-4244-9f8a-0060e157ff0f",
 				"type": "text/javascript",
 				"exec": [
-					""
+					"tests[\"[INFO] Request: \" + JSON.stringify(request)] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
 				]
 			}
 		}
 	],
 	"variable": [
 		{
-			"id": "444469c1-2dc2-4d65-8dcb-48629d51a5dd",
+			"id": "87e3318b-76ac-4a97-a83a-d4aef9322e5b",
 			"key": "base_url",
-			"value": "https://localhost:8001",
-			"type": "string"
+			"value": "http://arch.homework"
 		},
 		{
-			"id": "b3b1ff4e-0571-4e8a-b7aa-0cd2dc2ea413",
-			"key": "access_token",
-			"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkMyOUQ5QzM1QTZGN0YzNUI5NzU3NTdGMkU1Mjk0MTAxIiwidHlwIjoiYXQrand0In0.eyJuYmYiOjE1OTMzNzE1MDQsImV4cCI6MTU5MzM3NTEwNCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSIsImF1ZCI6WyJwcm9kdWN0LWFwaSIsInByb2ZpbGUtYXBpIl0sImNsaWVudF9pZCI6ImF1dGgtYXBpLWdhdGV3YXkiLCJzdWIiOiI4IiwiYXV0aF90aW1lIjoxNTkzMzcxNTA0LCJpZHAiOiJsb2NhbCIsImdpdmVuX25hbWUiOiJCcmlnaXR0ZSIsImZhbWlseV9uYW1lIjoiV2FsdGVyIiwianRpIjoiREQ0NUE4MEU0QTRDRTYzOERGQjk5OTFFN0M3ODY0MzciLCJpYXQiOjE1OTMzNzE1MDQsInNjb3BlIjpbImVtYWlsIiwib3BlbmlkIiwicGhvbmUiLCJwcm9kdWN0LWFwaSIsInByb2ZpbGUiLCJwcm9maWxlLWFwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.O1K7j6ekU9BwTFHy7Kz_VLmvanhurI3s_t8bzP7-H5MLrJ_nh7I21xWUP0qFW7DEHZ8agaph3y_v52yRVIffVYcPT3crcwMhhmVVOC58VDBld9e3ROqeRf-sctf14p-CRK8QtUsR8iTInbZHBTtrbuouW9ZP_2_Qv6nLYAC3nLdRSno1uNQHrB-tTTMyOFY-nYZUW5hzXIvpdAI5DOdTd-wOUEJCqWQNOtuGe7EC0Kt2hGYXU4Vo1ulmhDbbYOD-oJ00LKgxcR52odQTTvDm79IAry-mtouBKftl_mzP_0dRB6fXPJVaQ_N4E4A85Gt9NFxz2-6Nz8eqH0pXcCkNNA",
-			"type": "string"
+			"id": "d5107213-c03e-4597-99ff-6c5f6f8e5def",
+			"key": "user1_access_token",
+			"value": ""
 		},
 		{
-			"id": "62a60a1e-cfb4-47ef-9e52-4a60e1d55487",
-			"key": "client_id",
-			"value": "postman",
-			"type": "string"
+			"id": "53596945-20b3-4bd3-8666-35ae5a60b6ed",
+			"key": "user1_username",
+			"value": ""
 		},
 		{
-			"id": "599e7739-f1a4-42a3-9e60-b5eb2a15361b",
-			"key": "client_secret",
-			"value": "42C65298-65C4-41C8-BF11-2F620EC86D0F",
-			"type": "string"
+			"id": "c8361e1a-e879-4087-b11b-ea535a3e2f07",
+			"key": "user1_password",
+			"value": ""
 		},
 		{
-			"id": "50ffdd6b-ef3e-4dbc-a0cc-2d1d0ba3c912",
-			"key": "username",
-			"value": "Pearline.Hansen45",
-			"type": "string"
-		},
-		{
-			"id": "75cb4273-4968-4ce0-b6a4-c02b6a4cfca7",
-			"key": "password",
-			"value": "t3XyP5hDkc01Au2",
-			"type": "string"
-		},
-		{
-			"id": "e74bca0c-1f3e-4aa9-937a-836fe317220a",
+			"id": "98926f2d-77e7-486b-845a-6fbf60afa07a",
 			"key": "product_id",
-			"value": 14,
-			"type": "number"
+			"value": ""
 		},
 		{
-			"id": "e89fe8e3-1f69-4843-b3e1-c1fe043546d8",
-			"key": "user_id",
-			"value": 8,
-			"type": "number"
+			"id": "c1a031de-500e-4808-9a25-bebb4ac76d06",
+			"key": "user1_id",
+			"value": ""
 		},
 		{
-			"id": "9c7e7c80-92ee-49d1-b24c-19f702e11a44",
-			"key": "other_user_id",
-			"value": 7,
-			"type": "number"
+			"id": "474137b0-b901-4005-84ed-08172f91808e",
+			"key": "user2_id",
+			"value": ""
+		},
+		{
+			"id": "6ea5b9d1-4d94-4991-80d2-06be27a5f660",
+			"key": "user2_access_token",
+			"value": ""
+		},
+		{
+			"id": "738aa528-8f4a-4adb-937f-e73d0e673132",
+			"key": "user2_username",
+			"value": ""
+		},
+		{
+			"id": "f8ac5848-3387-422b-8c3c-5836149a282a",
+			"key": "user2_password",
+			"value": ""
+		},
+		{
+			"id": "0739b6b6-724a-48b8-85a4-525982c0f6c3",
+			"key": "user1_givenname",
+			"value": ""
+		},
+		{
+			"id": "06142088-0bf0-4b4e-8790-548ec92c86ce",
+			"key": "user1_familyname",
+			"value": ""
+		},
+		{
+			"id": "66ca17ee-bcfa-4578-8257-deb5c68b1ce7",
+			"key": "user1_email",
+			"value": ""
+		},
+		{
+			"id": "6ead363f-4d46-409f-beae-ad683e67af6f",
+			"key": "user1_phonenumber",
+			"value": ""
 		}
 	],
 	"protocolProfileBehavior": {}

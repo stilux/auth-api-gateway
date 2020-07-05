@@ -37,8 +37,10 @@ namespace AuthServer.Controllers
             if (model == null) return BadRequest();
             try
             {
-                var userId = await _accountService.CreateUserAsync(model.MapToUserCreateModel());
-                return Created(_configuration.GetSection("IdentityServer")["UserInfoUrl"], userId);
+                var user = await _accountService.CreateUserAsync(model.MapToUserCreateModel());
+                if (user != null)
+                    return Created($"{Request.Path}/{user.Id}", user);
+                return BadRequest();
             }
             catch (UserCreateException ex)
             {
@@ -47,11 +49,30 @@ namespace AuthServer.Controllers
         }
         
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpGet("{id:long}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserDto>> Get(long id)
+        {
+            var userId = User.GetSubjectId();
+            if (!userId.Equals(id.ToString(), StringComparison.InvariantCultureIgnoreCase))
+            {
+                return Forbid();
+            }
+
+            var user = await _accountService.GetUserAsync(userId);
+            if (user != null)
+                return Ok(user.MapToUserDto());
+            return NotFound();
+        }
+        
+        [Authorize]
+        [HttpPut("{id:long}")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDto model)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateUserDto model)
         {
             if (!User.GetSubjectId().Equals(id.ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
