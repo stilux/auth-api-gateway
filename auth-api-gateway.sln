@@ -18,7 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer.DAL", "src\AuthS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "postman", "postman", "{26BE929B-D17E-4F31-B550-F8BA341B7038}"
 ProjectSection(SolutionItems) = preProject
-	postman\auth_gateway.postman_collection.json = postman\auth_gateway.postman_collection.json
+	postman\product.postman_collection.json = postman\product.postman_collection.json
+	postman\product-db-init.postman_collection.json = postman\product-db-init.postman_collection.json
 EndProjectSection
 EndProject
 Global

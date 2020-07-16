@@ -35,6 +35,14 @@ namespace ProductAPI
 
             services.AddDbContext<ProductContext>(options
                 => options.UseNpgsql(_configuration.GetConnectionString("ProductDBConnection")));
+            
+            var cacheConfig = _configuration.GetSection("Cache");
+            services.Configure<CacheConfig>(cacheConfig);
+
+            services.AddMemoryCache(options =>
+            {
+                options.SizeLimit = cacheConfig.GetValue<long>("SizeLimit");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

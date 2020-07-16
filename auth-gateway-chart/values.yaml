@@ -19,6 +19,9 @@ productApi:
   configPath: "/app/config"
   logLevel: "Information"
   allowedHosts: "*"
+  cache:
+    enabled: true
+    sizeLimit: 100    
   
 authServer:
   image:
