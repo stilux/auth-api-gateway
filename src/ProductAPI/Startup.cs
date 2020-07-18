@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using ProductAPI.Filters;
 using ProductAPI.Models;
 using ProductAPI.Providers;
+using ProductAPI.Services;
 using ProductAPI.Validators;
 
 namespace ProductAPI
@@ -31,10 +32,20 @@ namespace ProductAPI
                 })
                 .AddFluentValidation();
             
-            services.AddTransient<IValidator<Product>, ProductValidator>();
-
             services.AddDbContext<ProductContext>(options
                 => options.UseNpgsql(_configuration.GetConnectionString("ProductDBConnection")));
+            
+            services.AddTransient<IValidator<Product>, ProductValidator>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddSingleton<IProductDbInitializerService, ProductDbInitializerService>();
+
+            var cacheConfig = _configuration.GetSection("Cache");
+            services.Configure<CacheConfig>(cacheConfig);
+
+            services.AddMemoryCache(options =>
+            {
+                options.SizeLimit = cacheConfig.GetValue<long>("SizeLimit");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,7 +64,13 @@ namespace ProductAPI
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
-            serviceScope.ServiceProvider.GetRequiredService<ProductContext>().Database.Migrate();
+            var serviceProvider = serviceScope.ServiceProvider;
+            
+            serviceProvider.GetRequiredService<ProductContext>().Database.Migrate();
+
+            var config = serviceProvider.GetRequiredService<IConfiguration>();
+            var productsCount = config.GetSection("DbInitialize").GetValue<int>("ItemsCount");
+            serviceProvider.GetRequiredService<IProductDbInitializerService>().GenerateProducts(productsCount);
         }
     }
 }

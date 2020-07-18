@@ -9,7 +9,7 @@ metadata:
   labels:
     {{- include "auth-gateway-chart.selectorLabels" . | nindent 4 }}
 data:   
-  appsettings.json: |-
+  gateway-appsettings.json: |-
     {
       "Logging": {
         "LogLevel": {
@@ -20,6 +20,25 @@ data:
       },
       "AllowedHosts": "*"
     }
+  product-api-appsettings.json: |-
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": {{ .Values.log.level | quote }},
+          "Microsoft": "Warning",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "AllowedHosts": "*",
+      "Cache": {
+          "Enabled": {{ .Values.productApi.cache.enabled }},
+          "Period": "00:05:00",
+          "SizeLimit": {{ .Values.productApi.cache.sizeLimit }}
+      },
+      "DbInitialize": {
+          "ItemsCount": 1000
+      }
+    }    
   auth-server-appsettings.json: |-
     {
       "IdentityServer": {
@@ -39,11 +58,7 @@ data:
           }
         ],
         "UpstreamPathTemplate": "/product/{id}",
-        "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],        
-        "AuthenticationOptions": {
-          "AuthenticationProviderKey": "identity_provider",
-          "AllowedScopes": []
-        }
+        "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
       },
       {
         "DownstreamPathTemplate": "/api/v1/product",
@@ -55,11 +70,7 @@ data:
           }
         ],
         "UpstreamPathTemplate": "/product",
-        "UpstreamHttpMethod": [ "POST" ],        
-        "AuthenticationOptions": {
-          "AuthenticationProviderKey": "identity_provider",
-          "AllowedScopes": []
-        }
+        "UpstreamHttpMethod": [ "POST" ]
       },
       {
         "DownstreamPathTemplate": "/api/v1/account/{id}",

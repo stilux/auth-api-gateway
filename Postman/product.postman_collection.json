@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "60b3eda5-b615-40c5-980f-7415fe7f7fc5",
+		"name": "Product",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7d72ee0e-2c5f-452a-8942-3b2ccaa26060",
+						"exec": [
+							"if (pm.response.to.have.status(200)) {\r",
+							"    var products = JSON.parse(responseBody);\r",
+							"    if (products && products.length > 0) {\r",
+							"        pm.collectionVariables.set(\"vendor\", products[0].vendor);\r",
+							"    }     \r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/product/find?searchPattern=cache-test&take=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"product",
+						"find"
+					],
+					"query": [
+						{
+							"key": "searchPattern",
+							"value": "cache-test"
+						},
+						{
+							"key": "take",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e0c95755-4197-4f44-afc7-abecb12d7bf3",
+						"exec": [
+							"if (pm.response.to.have.status(200)) {\r",
+							"    var i = pm.collectionVariables.get(\"iteration\");\r",
+							"    var count = pm.collectionVariables.get(\"iterationCount\"); \r",
+							"    if (i < count) {\r",
+							"        postman.setNextRequest(\"Find product\");\r",
+							"        pm.collectionVariables.set(\"iteration\", ++i);    \r",
+							"    } else {\r",
+							"        postman.setNextRequest(null);\r",
+							"        pm.collectionVariables.set(\"iteration\", 1);\r",
+							"    }   \r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/product/find?searchPattern={{vendor}}&take=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"product",
+						"find"
+					],
+					"query": [
+						{
+							"key": "searchPattern",
+							"value": "{{vendor}}"
+						},
+						{
+							"key": "take",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "8efddfd0-a4b1-481e-9e2a-59c5af26fda8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2149cede-71ff-4372-bc10-f11e4a4d6f56",
+				"type": "text/javascript",
+				"exec": [
+					"tests[\"[INFO] Request: \" + JSON.stringify(request)] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "ed51c127-fd35-4a91-8ef2-2143692df388",
+			"key": "base_url",
+			"value": "http://arch.homework"
+		},
+		{
+			"id": "456aa7fb-5328-47cf-bab1-a149f7291ce5",
+			"key": "vendor",
+			"value": ""
+		},
+		{
+			"id": "fdf19304-5bcb-4db7-87b7-a364275e4251",
+			"key": "iteration",
+			"value": 1
+		},
+		{
+			"id": "7ef72c2c-f75a-4e55-8df4-d44bb6081c77",
+			"key": "iterationCount",
+			"value": "100"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

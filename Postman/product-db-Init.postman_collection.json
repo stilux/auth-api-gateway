@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "486b08f8-4491-47dd-ad6d-bb3b610f7df3",
+		"name": "Product Db Init",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c24aeb77-d891-4c2a-89fe-0cd961b0f517",
+						"exec": [
+							"pm.response.to.have.status(201);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8c655eb1-dace-4bcb-9f9d-19b1f952ffeb",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomProductName}}\",\r\n    \"vendorcode\": \"cache-test\",\r\n    \"vendor\": \"{{$randomCompanyName}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/product",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b9c6c768-068d-454d-a00e-b56813ea4aed",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0eb60059-fa95-4d60-b82a-003ab2322670",
+				"type": "text/javascript",
+				"exec": [
+					"tests[\"[INFO] Request: \" + JSON.stringify(request)] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "df05863e-7087-44ef-a6f0-19491069f33f",
+			"key": "base_url",
+			"value": "http://arch.homework"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

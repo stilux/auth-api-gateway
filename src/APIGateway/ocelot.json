@@ -10,11 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/product/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "identity_provider",
-        "AllowedScopes": []
-      }
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/product",
@@ -26,11 +22,7 @@
         }
       ],
       "UpstreamPathTemplate": "/product",
-      "UpstreamHttpMethod": [ "POST" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "identity_provider",
-        "AllowedScopes": []
-      }
+      "UpstreamHttpMethod": [ "POST" ]
     },
     {
       "DownstreamPathTemplate": "/api/v1/account/{id}",

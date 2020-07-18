@@ -35,7 +35,7 @@ spec:
               - configMap:
                   name: {{ include "auth-gateway-chart.fullname" . }}
                   items:
-                    - key: appsettings.json
+                    - key: gateway-appsettings.json
                       path: appsettings.json
                     - key: ocelot.json
                       path: ocelot.json

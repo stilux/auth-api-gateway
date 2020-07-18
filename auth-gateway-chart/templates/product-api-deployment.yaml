@@ -49,7 +49,7 @@ spec:
               - configMap:
                   name: {{ include "auth-gateway-chart.fullname" . }}
                   items:
-                    - key: appsettings.json
+                    - key: product-api-appsettings.json
                       path: appsettings.json
               - secret:
                   name: {{ include "auth-gateway-chart.fullname" . }}
