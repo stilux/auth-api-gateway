@@ -87,12 +87,12 @@ namespace ProductAPI.Controllers
         [HttpGet("find")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<Product>>> Find([FromQuery] string searchPattern, [FromQuery] int take = 100)
+        public async Task<ActionResult<IEnumerable<Product>>> Find([FromQuery] string q, [FromQuery] int take = 100)
         {
-            if (string.IsNullOrWhiteSpace(searchPattern))
-                return BadRequest($"Parameter {nameof(searchPattern)} is empty.");
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest($"Parameter {nameof(q)} is empty.");
 
-            return Ok(await _productService.FindAsync(searchPattern));
+            return Ok(await _productService.FindAsync(q, take));
         }
     }
 }
