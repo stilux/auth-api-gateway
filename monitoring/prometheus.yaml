@@ -1,0 +1,10 @@
+﻿prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+
+grafana:
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana-dashboard

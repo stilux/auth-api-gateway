@@ -36,7 +36,7 @@ data:
           "SizeLimit": {{ .Values.productApi.cache.sizeLimit }}
       },
       "DbInitialize": {
-          "ItemsCount": 1000
+          "ItemsCount": 5000
       }
     }    
   auth-server-appsettings.json: |-

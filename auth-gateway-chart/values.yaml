@@ -2,20 +2,27 @@ postgresql:
   enabled: true
   postgresqlUsername: "db_user"
   postgresqlPassword: "Zu0yAx"
+  postgresqlDatabase: "Products"
   identityServerDatabase: "IdentityServer"
-  productDatabase: "Products"
   service:
     port: "5432"
   image:
     tag: "latest"
   persistence:
     size: 1Gi   
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: monitoring
+      interval: 30s
+      scrapeTimeout: 10s
       
 productApi:
   image:
     repository: "stilux/product-api"
     pullPolicy: Always
-  replicaCount: 2
+  replicaCount: 1
   configPath: "/app/config"
   logLevel: "Information"
   allowedHosts: "*"
